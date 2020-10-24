@@ -1,0 +1,39 @@
+{
+  "name": "eth-quiz-with-wrapper",
+  "version": "0.0.1",
+  "description": "ethereum quiz reference implementation",
+  "main": "index.ts",
+  "scripts": {
+    "compile": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "contract-test": "truffle compile && truffle test",
+    "typechain": "truffle compile && typechain --target ethers-v5 --outDir ./src/types './build/contracts/*.json'",
+    "prepublish": "truffle compile && typechain --target ethers-v5 --outDir ./src/types './build/contracts/*.json' && tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/reud/eth-quiz-with-wrapper.git"
+  },
+  "keywords": [
+    "ethereum",
+    "smart-contract"
+  ],
+  "author": "reud <mail@reud.net> (https://github.com/reud)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/reud/eth-quiz-with-wrapper/issues"
+  },
+  "homepage": "https://github.com/reud/eth-quiz-with-wrapper#readme",
+  "devDependencies": {
+    "@truffle/hdwallet-provider": "^1.1.1",
+    "@typechain/ethers-v5": "^2.0.0",
+    "dotenv": "^8.2.0",
+    "truffle": "^5.1.50",
+    "typechain": "^3.0.0",
+    "typescript": "^4.0.3"
+  },
+  "dependencies": {
+    "ethers": "^5.0.19"
+  },
+  "files": ["./dist"]
+}
