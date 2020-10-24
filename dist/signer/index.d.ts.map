@@ -1,0 +1,1 @@
+{"version":3,"file":"index.d.ts","sourceRoot":"","sources":["../../src/signer/index.ts"],"names":[],"mappings":"AAAA,OAAO,EAAC,MAAM,EAAC,MAAM,QAAQ,CAAC;AAE9B,8BAAsB,kBAAkB;IACpC,QAAQ,CAAC,MAAM,EAAE,MAAM,CAAC,MAAM,CAAC;IAC/B,SAAS,aAAa,MAAM,EAAE,MAAM,CAAC,MAAM;CAO9C"}
