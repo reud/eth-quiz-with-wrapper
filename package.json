@@ -35,5 +35,5 @@
   "dependencies": {
     "ethers": "^5.0.19"
   },
-  "files": ["./dist"]
+  "files": ["dist"]
 }
