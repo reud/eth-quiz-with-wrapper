@@ -1,3 +1,2 @@
-import { SignerWithProvider } from "./index";
-export declare const newMetaMaskSwP: () => SignerWithProvider;
+export {};
 //# sourceMappingURL=metamask.d.ts.map

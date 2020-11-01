@@ -13,9 +13,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.newMetaMaskSwP = void 0;
 var index_1 = require("./index");
-var ethers_1 = require("ethers");
 var MetaMaskSwP = /** @class */ (function (_super) {
     __extends(MetaMaskSwP, _super);
     function MetaMaskSwP(provider) {
@@ -23,11 +21,12 @@ var MetaMaskSwP = /** @class */ (function (_super) {
     }
     return MetaMaskSwP;
 }(index_1.SignerWithProvider));
-exports.newMetaMaskSwP = function () {
+/* TBD
+export const newMetaMaskSwP = async (): SignerWithProvider => {
     // @ts-ignore
-    yield window.ethereum.enable();
-    // @ts-ignore
-    var provider = new ethers_1.ethers.providers.Web3Provider(window.ethereum);
+    await window.ethereum.enable();
+    const provider = new ethers.providers.Web3Provider(window.ethereum!);
     return new MetaMaskSwP(provider);
 };
+ */ 
 //# sourceMappingURL=metamask.js.map

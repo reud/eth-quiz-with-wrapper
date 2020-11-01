@@ -7,10 +7,11 @@ class MetaMaskSwP extends SignerWithProvider {
     }
 }
 
-export const newMetaMaskSwP = (): SignerWithProvider => {
+/* TBD
+export const newMetaMaskSwP = async (): SignerWithProvider => {
     // @ts-ignore
     await window.ethereum.enable();
-    // @ts-ignore
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const provider = new ethers.providers.Web3Provider(window.ethereum!);
     return new MetaMaskSwP(provider);
 };
+ */

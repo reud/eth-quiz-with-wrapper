@@ -1,14 +1,14 @@
 {
   "name": "eth-quiz-with-wrapper",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "ethereum quiz reference implementation",
   "main": "dist/index.js",
   "scripts": {
     "compile": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
     "contract-test": "truffle compile && truffle test",
-    "typechain": "truffle compile && mv build/contracts dist/contracts && typechain --target ethers-v5 --outDir ./dist/types './dist/contracts/*.json'",
-    "prepublish": "truffle compile && mv build/contracts dist/contracts && typechain --target ethers-v5 --outDir ./dist/types './dist/9contracts/*.json' && tsc"
+    "typechain": "truffle compile && rm -rf dist/contracts && mv build/contracts dist/contracts && typechain --target ethers-v5 --outDir ./dist/types './dist/contracts/*.json'",
+    "prepublish": "truffle compile && rm -rf dist/contracts && mv build/contracts dist/contracts && typechain --target ethers-v5 --outDir ./dist/types './dist/9contracts/*.json' && tsc"
   },
   "repository": {
     "type": "git",

@@ -41,7 +41,7 @@ class QuizClient {
 
     public static initialize = async (swp: SignerWithProvider, network: NETWORK) => {
         const masterAddress = getMasterContractAddress(network);
-        const master = (new ethers.Contract(masterAddress, masterAbi.abi, swp.signer.provider!) as any) as Master;
+        const master = (new ethers.Contract(masterAddress, masterAbi.abi, swp.signer) as any) as Master;
         const p = await master.p();
         const q = await master.q();
         return new QuizClient(swp,master,p.toNumber(), q.toNumber());
