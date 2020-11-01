@@ -11,5 +11,7 @@ export abstract class SignerWithProvider {
     }
 }
 
+export * from './metamask';
+export * from './privatekey';
 
 

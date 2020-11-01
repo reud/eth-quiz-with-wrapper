@@ -17,5 +17,5 @@ declare class QuizClient {
     deployProblemContract: (master: Master, statementHash: BigInt, y: number, h: number, overrides?: ethers.Overrides | undefined) => Promise<null | string>;
 }
 export declare const newQuizClient: (swp: SignerWithProvider, network: NETWORK) => QuizClient;
-export {};
+export * from './signer';
 //# sourceMappingURL=index.d.ts.map
