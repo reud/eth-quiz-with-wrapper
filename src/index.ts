@@ -5,9 +5,9 @@ import {getRandomInt, hash, modHash, repeatSquaring} from "./math";
 
 type NETWORK = 'main' | 'ropsten' | 'local'
 
-const masterAbi = require('../build/contracts/Master.json');
-const problemAbi = require('../build/contracts/Problem.json');
-const answerAbi = require('../build/contracts/Answer.json');
+const masterAbi = require('./contracts/Master.json');
+const problemAbi = require('./contracts/Problem.json');
+const answerAbi = require('./contracts/Answer.json');
 
 function sleep(milliseconds: number) {
     return new Promise<void>((resolve) => {

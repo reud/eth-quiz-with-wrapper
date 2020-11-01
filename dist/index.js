@@ -59,9 +59,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.newQuizClient = void 0;
 var ethers_1 = require("ethers");
-var masterAbi = require('../build/contracts/Master.json');
-var problemAbi = require('../build/contracts/Problem.json');
-var answerAbi = require('../build/contracts/Answer.json');
+var math_1 = require("./math");
+var masterAbi = require('./contracts/Master.json');
+var problemAbi = require('./contracts/Problem.json');
+var answerAbi = require('./contracts/Answer.json');
+function sleep(milliseconds) {
+    return new Promise(function (resolve) {
+        setTimeout(function () { return resolve(); }, milliseconds);
+    });
+}
 var getMasterContractAddress = function (network) {
     switch (network) {
         case "main":
@@ -75,7 +81,7 @@ var getMasterContractAddress = function (network) {
     }
 };
 var QuizClient = /** @class */ (function () {
-    function QuizClient(swp, network) {
+    function QuizClient(swp, master, p, q) {
         var _this = this;
         this.fetchProblemContract = function (address) {
             return new ethers_1.ethers.Contract(address, problemAbi.abi, _this.getProvider());
@@ -83,28 +89,88 @@ var QuizClient = /** @class */ (function () {
         this.fetchAnswerContract = function (address) {
             return new ethers_1.ethers.Contract(address, answerAbi.abi, _this.getProvider());
         };
-        this.deployProblemContract = function (master, statementHash, y, h, overrides) { return __awaiter(_this, void 0, void 0, function () {
-            var option, transaction, t, events;
+        this.rawDeployProblemContract = function (statementHash, y, h, overrides) { return __awaiter(_this, void 0, void 0, function () {
+            var option, transaction;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         option = __assign({ gasLimit: 4700000 }, overrides);
-                        return [4 /*yield*/, master.createProblem(statementHash.toString(), y, h, option)];
+                        return [4 /*yield*/, this.master.createProblem(statementHash.toString(), y, h, option)];
                     case 1:
                         transaction = _a.sent();
                         return [4 /*yield*/, transaction.wait()];
+                    case 2: return [2 /*return*/, _a.sent()];
+                }
+            });
+        }); };
+        this.deployProblemContract = function (problemStatement, answerStatement) { return __awaiter(_this, void 0, void 0, function () {
+            var h, problemStatementHash, answerStatementHash, y;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        h = math_1.getRandomInt(this.q);
+                        problemStatementHash = math_1.hash(problemStatement);
+                        answerStatementHash = math_1.modHash(answerStatement, this.q);
+                        y = math_1.repeatSquaring(h, answerStatementHash, this.q);
+                        return [4 /*yield*/, this.rawDeployProblemContract(problemStatementHash, y, h)];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        }); };
+        this.answerProblemContract = function (problemAddress, yourAnswer) { return __awaiter(_this, void 0, void 0, function () {
+            var problem, h, r, t, x, tran, receipt, address, inValidCode, code, answerContract, c, s, transaction, ansReceipt;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        problem = this.fetchProblemContract(problemAddress);
+                        return [4 /*yield*/, problem.h()];
+                    case 1:
+                        h = (_a.sent()).toNumber();
+                        r = math_1.getRandomInt(this.p);
+                        t = math_1.repeatSquaring(h, r, this.q);
+                        x = math_1.modHash(yourAnswer, this.q);
+                        return [4 /*yield*/, problem.createAnswer(t)];
                     case 2:
-                        t = _a.sent();
-                        events = t.events;
-                        if (!events)
-                            return [2 /*return*/, null];
-                        return [2 /*return*/, events[0].args.contract_address];
+                        tran = _a.sent();
+                        return [4 /*yield*/, tran.wait()];
+                    case 3:
+                        receipt = _a.sent();
+                        address = receipt.events[0].args.contract_address;
+                        inValidCode = '0x';
+                        return [4 /*yield*/, this.isCodeExist(address)];
+                    case 4:
+                        code = _a.sent();
+                        _a.label = 5;
+                    case 5:
+                        if (!(code === inValidCode)) return [3 /*break*/, 8];
+                        console.warn("contractの情報がブロックチェーンネットワークに共有されきっていないため、少し待ちます。");
+                        return [4 /*yield*/, sleep(5000)];
+                    case 6:
+                        _a.sent();
+                        return [4 /*yield*/, this.isCodeExist(address)];
+                    case 7:
+                        code = _a.sent();
+                        return [3 /*break*/, 5];
+                    case 8:
+                        answerContract = this.fetchAnswerContract(address);
+                        return [4 /*yield*/, answerContract.block_number()];
+                    case 9:
+                        c = _a.sent();
+                        s = x * c.toNumber() + r;
+                        return [4 /*yield*/, answerContract.verify(s)];
+                    case 10:
+                        transaction = _a.sent();
+                        return [4 /*yield*/, transaction.wait()];
+                    case 11:
+                        ansReceipt = _a.sent();
+                        return [2 /*return*/, ansReceipt.events[0].args.is_correct];
                 }
             });
         }); };
         this.swp = swp;
-        this.network = network;
-        this.masterAddress = getMasterContractAddress(network);
+        this.master = master;
+        this.p = p;
+        this.q = q;
     }
     QuizClient.prototype.getProvider = function () {
         return this.swp.signer.provider;
@@ -119,13 +185,27 @@ var QuizClient = /** @class */ (function () {
             });
         });
     };
-    QuizClient.prototype.fetchMasterContract = function () {
-        return new ethers_1.ethers.Contract(this.masterAddress, masterAbi.abi, this.getProvider());
-    };
+    QuizClient.initialize = function (swp, network) { return __awaiter(void 0, void 0, void 0, function () {
+        var masterAddress, master, p, q;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    masterAddress = getMasterContractAddress(network);
+                    master = new ethers_1.ethers.Contract(masterAddress, masterAbi.abi, swp.signer.provider);
+                    return [4 /*yield*/, master.p()];
+                case 1:
+                    p = _a.sent();
+                    return [4 /*yield*/, master.q()];
+                case 2:
+                    q = _a.sent();
+                    return [2 /*return*/, new QuizClient(swp, master, p.toNumber(), q.toNumber())];
+            }
+        });
+    }); };
     return QuizClient;
 }());
 exports.newQuizClient = function (swp, network) {
-    return new QuizClient(swp, network);
+    return QuizClient.initialize(swp, network);
 };
 __exportStar(require("./signer"), exports);
 //# sourceMappingURL=index.js.map

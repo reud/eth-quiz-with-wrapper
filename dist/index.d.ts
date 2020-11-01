@@ -1,21 +1,22 @@
 import { SignerWithProvider } from "./signer";
-import { Master } from './types';
-import { Problem } from './types';
-import { Answer } from './types';
-import { ethers } from 'ethers';
+import { Answer, Master, Problem } from './types';
+import { ContractReceipt, ethers } from 'ethers';
 declare type NETWORK = 'main' | 'ropsten' | 'local';
 declare class QuizClient {
     swp: SignerWithProvider;
-    network: NETWORK;
-    masterAddress: string;
-    constructor(swp: SignerWithProvider, network: NETWORK);
+    master: Master;
+    p: number;
+    q: number;
+    private constructor();
+    static initialize: (swp: SignerWithProvider, network: NETWORK) => Promise<QuizClient>;
     private getProvider;
     isCodeExist(address: string): Promise<string>;
-    fetchMasterContract(): Master;
     fetchProblemContract: (address: string) => Problem;
     fetchAnswerContract: (address: string) => Answer;
-    deployProblemContract: (master: Master, statementHash: BigInt, y: number, h: number, overrides?: ethers.Overrides | undefined) => Promise<null | string>;
+    rawDeployProblemContract: (statementHash: BigInt, y: number, h: number, overrides?: ethers.Overrides | undefined) => Promise<ContractReceipt>;
+    deployProblemContract: (problemStatement: string, answerStatement: string) => Promise<ContractReceipt>;
+    answerProblemContract: (problemAddress: string, yourAnswer: string) => Promise<boolean>;
 }
-export declare const newQuizClient: (swp: SignerWithProvider, network: NETWORK) => QuizClient;
+export declare const newQuizClient: (swp: SignerWithProvider, network: NETWORK) => Promise<QuizClient>;
 export * from './signer';
 //# sourceMappingURL=index.d.ts.map
